@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a472a">
+    <title>Story - StoryBridge</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a472a;
+            --secondary: #2d6a47;
+            --accent: #f5d547;
+            --text: #0f1419;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Georgia', 'Segoe UI', serif;
+            color: var(--text);
+            background: var(--light-bg);
+            line-height: 1.8;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(26, 71, 42, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .story-header-title {
+            flex: 1;
+        }
+
+        .story-header-title h1 {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .story-meta-header {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            opacity: 0.95;
+            flex-wrap: wrap;
+        }
+
+        .story-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .control-btn:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .control-btn.active {
+            background: var(--accent);
+            color: var(--primary);
+            border-color: var(--accent);
+        }
+
+        /* Main Content */
+        .story-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .story-content {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+
+        /* Parallel Text Layout */
+        .parallel-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .parallel-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        .language-section {
+            padding: 20px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .language-label {
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .language-section p {
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .language-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Single Language View */
+        .single-view {
+            padding: 20px;
+        }
+
+        .single-view p {
+            margin-bottom: 20px;
+            font-size: 18px;
+            line-height: 1.9;
+        }
+
+        /* View Modes */
+        .view-modes {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .view-mode-btn {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+
+        .view-mode-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .view-mode-btn:hover {
+            color: var(--secondary);
+        }
+
+        /* Hidden by default */
+        .view-content {
+            display: none;
+        }
+
+        .view-content.active {
+            display: block;
+        }
+
+        /* Font Size Control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+
+        .font-size-control label {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .font-size-control input {
+            width: 150px;
+            cursor: pointer;
+        }
+
+        .font-size-value {
+            background: var(--accent);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* Reading Progress */
+        .reading-progress {
+            margin-top: 30px;
+            padding: 15px;
+            background: var(--light-bg);
+            border-radius: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Favorites */
+        .favorite-btn {
+            background: none;
+            border: 2px solid var(--accent);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .favorite-btn:hover {
+            background: var(--accent);
+            color: var(--primary);
+        }
+
+        .favorite-btn.favorited {
+            background: var(--accent);
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .story-footer {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .story-footer p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--light-bg);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 2000;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Themes */
+        body.theme-dark {
+            --text: #f5f5f5;
+            --light-bg: #2a2a2a;
+            --card-bg: #1f1f1f;
+            --border: #444;
+            background: #0f0f0f;
+        }
+
+        body.theme-sepia {
+            --light-bg: #f4eae0;
+            --card-bg: #f9f6f0;
+            background: #eae6dd;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <button class="back-btn" onclick="goBack()">← Back</button>
+            <div class="story-header-title">
+                <h1 id="storyTitle">Loading...</h1>
+                <div class="story-meta-header">
+                    <span id="storyGenre">-</span>
+                    <span id="storyRating">⭐⭐⭐⭐⭐</span>
+                </div>
+            </div>
+            <div class="story-controls">
+                <button class="control-btn favorite-btn" id="favoriteBtn" onclick="toggleFavorite()">❤️ Favorite</button>
+                <button class="control-btn" onclick="shareStory()">📤 Share</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="story-container">
+        <div class="story-content">
+            <!-- Font Size Control -->
+            <div class="font-size-control">
+                <label for="fontSize">Font Size:</label>
+                <input type="range" id="fontSize" min="14" max="24" value="16" onchange="changeFontSize(this.value)">
+                <span class="font-size-value" id="fontSizeValue">16px</span>
+            </div>
+
+            <!-- Theme Control -->
+            <div class="font-size-control">
+                <label>Theme:</label>
+                <select onchange="changeTheme(this.value)" style="padding: 8px 12px; border-radius: 6px; border: 2px solid var(--border); cursor: pointer; font-weight: 700;">
+                    <option value="light">☀️ Light</option>
+                    <option value="dark">🌙 Dark</option>
+                    <option value="sepia">📖 Sepia</option>
+                </select>
+            </div>
+
+            <!-- View Modes -->
+            <div class="view-modes">
+                <button class="view-mode-btn active" onclick="switchView('parallel')">Parallel</button>
+                <button class="view-mode-btn" onclick="switchView('english')">English Only</button>
+                <button class="view-mode-btn" onclick="switchView('bangla')">বাংলা Only</button>
+            </div>
+
+            <!-- Parallel View -->
+            <div id="parallelView" class="view-content active">
+                <div class="parallel-container">
+                    <div class="language-section">
+                        <div class="language-label">📖 English</div>
+                        <div id="englishText"></div>
+                    </div>
+                    <div class="language-section">
+                        <div class="language-label">🇧🇩 বাংলা</div>
+                        <div id="banglaText"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- English Only -->
+            <div id="englishView" class="view-content single-view">
+                <div id="englishSingle"></div>
+            </div>
+
+            <!-- Bangla Only -->
+            <div id="banglaView" class="view-content single-view">
+                <div id="banglaSingle"></div>
+            </div>
+
+            <!-- Reading Progress -->
+            <div class="reading-progress">
+                <label>Reading Progress</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                    <span id="progressText">0%</span> complete
+                </p>
+            </div>
+        </div>
+
+        <div class="story-footer">
+            <p>Thank you for reading! Enjoy discovering more stories on StoryBridge.</p>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="goToHome()">← Back to Stories</button>
+                <button class="btn btn-secondary" onclick="shareStory()">📤 Share with Friends</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Sample story content (in a real app, this would come from a database)
+        const storyContent = {
+            "The Lost Garden": {
+                english: "Once upon a time, in the heart of a bustling city, a mysterious garden appeared overnight. No one knew who planted it, but everyone felt drawn to its magic. The garden was filled with flowers that bloomed in colors never seen before—flowers that seemed to glow with an inner light.\n\nA young girl named Maya discovered the garden while walking home from school. She pushed through the overgrown vines and stepped into a world of wonder. The flowers sang to her, their voices like wind chimes in a gentle breeze. She found herself drawn deeper into the garden, where the laws of nature seemed to bend.\n\nEvery day, Maya returned to the garden. She made friends with the ancient tree at its center, who told her stories of forgotten kingdoms and lost loves. The garden became her sanctuary, a place where her worries melted away like morning dew.\n\nOne day, the city announced plans to build a shopping mall on the land. Maya's heart broke. She knew she had to do something to save her beloved garden. That night, she made a wish upon the garden's largest flower, and something magical happened. The garden began to grow, spreading its vines across the city.\n\nBy morning, the entire neighborhood had transformed. Every building was covered in blooming flowers. The city residents gasped in wonder at the sudden beauty that had engulfed their world. The authorities could no longer tear down the garden—it had become part of the city itself.\n\nMaya smiled as she walked through the transformed streets. The garden had found a way to protect itself, just as she had protected it. And from that day on, the city was forever changed, a place where nature and civilization lived in perfect harmony.",
+                bangla: "এক সময়ে, একটি ব্যস্ত শহরের মাঝখানে, এক রহস্যময় বাগান রাতারাতি প্রকাশ পেয়ে উঠল। কেউ জানত না এটি কে রোপণ করেছে, কিন্তু সবাই এর জাদুর প্রতি আকৃষ্ট অনুভব করেছিল। বাগানটি এমন ফুলে পূর্ণ ছিল যা আগে কখনো দেখা যায়নি—ফুল যা অভ্যন্তরীণ আলোয় জ্বলজ্বল করত।\n\nময়া নাম্নী একটি তরুণ মেয়ে স্কুল থেকে বাড়ি ফেরার পথে বাগানটি আবিষ্কার করেছিল। সে বেড়ে ওঠা লতাগুলি ঠেলে দিয়ে আশ্চর্যের এক জগতে প্রবেश করেছিল। ফুলগুলি তার সাথে গান গেয়েছিল, তাদের কণ্ঠস্বর মৃদু বাতাসে বায়ু চিমে মতো। তিনি নিজেকে বাগানের গভীরে নিয়ে যাওয়ার জন্য বাধ্য অনুভব করেছিলেন, যেখানে প্রকৃতির নিয়মগুলি বাঁকানো মনে হয়েছিল।\n\nপ্রতিদিন ময়া বাগানে ফিরে এসেছিল। তিনি এর কেন্দ্রে প্রাচীন গাছের সাথে বন্ধুত্ব করেছিলেন, যিনি তাকে ভুলে যাওয়া রাজ্য এবং হারানো ভালোবাসার গল্প বলেছিলেন। বাগানটি তার আশ্রয়স্থল হয়ে উঠেছিল, একটি জায়গা যেখানে তার চিন্তাগুলি সকালের শিশির মতো গলে গেছিল।\n\nএক দিন, শহরটি জমিতে একটি শপিং মল নির্মাণের পরিকল্পনা ঘোষণা করেছিল। ময়ার হৃদয় ভেঙে গেছিল। সে জানত তাকে তার প্রিয় বাগানটি বাঁচাতে কিছু করতে হবে। সেই রাতে, সে বাগানের সবচেয়ে বড় ফুলের উপর একটি ইচ্ছা পূরণ করেছিল, এবং কিছু জাদুকর ঘটনা ঘটেছিল। বাগানটি বৃদ্ধি পেতে শুরু করেছিল, শহর জুড়ে তার লতাগুলি ছড়িয়ে দিয়েছিল।\n\nপরের সকালে, সম্পূর্ণ পাড়া রূপান্তরিত হয়েছিল। প্রতিটি বিল্ডিং ফুলের ফুল দিয়ে আচ্ছাদিত ছিল। শহরের বাসিন্দারা তাদের বিশ্বে হঠাৎ এসে পড়া সৌন্দর্যে অবাক হয়েছিলেন। কর্তৃপক্ষ আর বাগানটি ভেঙে ফেলতে পারত না—এটি শহরের নিজেই অংশ হয়ে উঠেছিল।\n\nময়া রূপান্তরিত রাস্তার মধ্য দিয়ে হেঁটে হাসি ভেঙে দিয়েছিল। বাগানটি নিজেকে রক্ষা করার উপায় খুঁজে পেয়েছিল, যেমন তিনি এটি রক্ষা করেছিলেন। এবং সেই দিন থেকে, শহরটি চিরকালের জন্য পরিবর্তিত হয়েছিল, এমন একটি স্থান যেখানে প্রকৃতি এবং সভ্যতা নিখুঁত সামঞ্জস্যে বাস করেছিল।"
+            }
+        };
+
+        let currentStory = null;
+        let isFavorited = false;
+        let currentView = 'parallel';
+        let currentTheme = 'light';
+
+        // Load story
+        function loadStory() {
+            const params = new URLSearchParams(window.location.search);
+            const storyTitle = params.get('title') || sessionStorage.getItem('currentStory')?.split('"')[1];
+            
+            const storedStory = sessionStorage.getItem('currentStory');
+            if (storedStory) {
+                currentStory = JSON.parse(storedStory);
+            }
+
+            if (currentStory) {
+                document.getElementById('storyTitle').textContent = currentStory.title;
+                document.getElementById('storyGenre').textContent = currentStory.genre;
+                document.getElementById('storyRating').textContent = currentStory.rating;
+
+                // Get story content
+                const content = storyContent[currentStory.title] || storyContent["The Lost Garden"];
+
+                // Render parallel view
+                document.getElementById('englishText').innerHTML = content.english.split('\n\n').map(p => `<p>${p}</p>`).join('');
+                document.getElementById('banglaText').innerHTML = content.bangla.split('\n\n').map(p => `<p>${p}</p>`).join('');
+
+                // Render single views
+                document.getElementById('englishSingle').innerHTML = content.english.split('\n\n').map(p => `<p>${p}</p>`).join('');
+                document.getElementById('banglaSingle').innerHTML = content.bangla.split('\n\n').map(p => `<p>${p}</p>`).join('');
+
+                // Check if favorited
+                checkFavorited();
+                
+                // Track reading
+                trackReading();
+            } else {
+                showToast('❌ Story not found');
+            }
+        }
+
+        // Switch view mode
+        function switchView(view) {
+            currentView = view;
+            
+            // Update buttons
+            document.querySelectorAll('.view-mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update content
+            document.getElementById('parallelView').classList.remove('active');
+            document.getElementById('englishView').classList.remove('active');
+            document.getElementById('banglaView').classList.remove('active');
+
+            if (view === 'parallel') {
+                document.getElementById('parallelView').classList.add('active');
+            } else if (view === 'english') {
+                document.getElementById('englishView').classList.add('active');
+            } else if (view === 'bangla') {
+                document.getElementById('banglaView').classList.add('active');
+            }
+        }
+
+        // Change font size
+        function changeFontSize(size) {
+            document.getElementById('fontSizeValue').textContent = size + 'px';
+            document.querySelectorAll('.language-section p, .single-view p').forEach(p => {
+                p.style.fontSize = size + 'px';
+            });
+            localStorage.setItem('fontSize', size);
+        }
+
+        // Change theme
+        function changeTheme(theme) {
+            currentTheme = theme;
+            document.body.classList.remove('theme-light', 'theme-dark', 'theme-sepia');
+            if (theme !== 'light') {
+                document.body.classList.add('theme-' + theme);
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        // Favorite story
+        function toggleFavorite() {
+            isFavorited = !isFavorited;
+            const btn = document.getElementById('favoriteBtn');
+            
+            if (isFavorited) {
+                btn.classList.add('favorited');
+                showToast('❤️ Added to favorites!');
+                localStorage.setItem('favorite_' + currentStory.title, 'true');
+            } else {
+                btn.classList.remove('favorited');
+                showToast('💔 Removed from favorites');
+                localStorage.removeItem('favorite_' + currentStory.title);
+            }
+        }
+
+        // Check if favorited
+        function checkFavorited() {
+            if (localStorage.getItem('favorite_' + currentStory.title)) {
+                isFavorited = true;
+                document.getElementById('favoriteBtn').classList.add('favorited');
+            }
+        }
+
+        // Track reading progress
+        function trackReading() {
+            const storyKey = 'progress_' + currentStory.title;
+            const progress = parseInt(localStorage.getItem(storyKey)) || 0;
+            updateProgress(progress);
+
+            // Update progress on scroll
+            let lastProgress = progress;
+            document.addEventListener('scroll', () => {
+                const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const scrolled = window.scrollY;
+                const newProgress = Math.round((scrolled / scrollHeight) * 100);
+
+                if (newProgress > lastProgress && newProgress <= 100) {
+                    lastProgress = newProgress;
+                    updateProgress(newProgress);
+                    localStorage.setItem(storyKey, newProgress);
+                }
+            });
+        }
+
+        // Update progress bar
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = percent + '%';
+        }
+
+        // Share story
+        function shareStory() {
+            if (navigator.share) {
+                navigator.share({
+                    title: currentStory.title,
+                    text: `Read "${currentStory.title}" on StoryBridge - English & Bangla Stories`,
+                    url: window.location.href
+                }).catch(err => console.log('Share error:', err));
+            } else {
+                // Fallback
+                const url = window.location.href;
+                navigator.clipboard.writeText(url);
+                showToast('📋 Link copied to clipboard!');
+            }
+        }
+
+        // Navigation
+        function goBack() {
+            window.history.back();
+        }
+
+        function goToHome() {
+            window.location.href = 'index.html';
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Load saved preferences
+        function loadPreferences() {
+            const savedFontSize = localStorage.getItem('fontSize') || '16';
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            
+            document.getElementById('fontSize').value = savedFontSize;
+            changeFontSize(savedFontSize);
+            changeTheme(savedTheme);
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadPreferences();
+            loadStory();
+        });
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('✅ Service Worker registered'))
+                .catch(err => console.log('❌ Service Worker registration failed:', err));
+        }
+    </script>
+</body>
+</html>
