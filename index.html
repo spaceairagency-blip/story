@@ -790,12 +790,19 @@
         });
 
         // Story interaction
-        function readStory(title) {
-            showToast(`📖 Opening "${title}"...`);
-            // In a real app, this would navigate to the story page
-            setTimeout(() => {
-                showToast(`✨ Enjoy reading "${title}"!`);
-            }, 1000);
+        function readStory(storyTitle) {
+            showToast(`📖 Opening "${storyTitle}"...`);
+            
+            // Find the story
+            const story = stories.find(s => s.title === storyTitle);
+            if (!story) {
+                showToast(`❌ Story not found`);
+                return;
+            }
+            
+            // Store story data and navigate
+            sessionStorage.setItem('currentStory', JSON.stringify(story));
+            window.location.href = 'story.html?title=' + encodeURIComponent(storyTitle);
         }
 
         // App store links
