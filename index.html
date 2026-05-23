@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a472a">
+    <meta name="description" content="Discover thousands of English-Bangla stories. Read parallel translations, explore diverse genres, and immerse yourself in tales.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231a472a' width='192' height='192'/><text x='50%' y='50%' font-size='100' font-weight='bold' fill='%23f5d547' text-anchor='middle' dominant-baseline='middle'>📖</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%231a472a' width='192' height='192'/><text x='50%' y='50%' font-size='100' font-weight='bold' fill='%23f5d547' text-anchor='middle' dominant-baseline='middle'>📖</text></svg>">
+    <title>StoryBridge - English & Bangla Stories</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a472a;
+            --secondary: #2d6a47;
+            --accent: #f5d547;
+            --text: #0f1419;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --border: #e0e0e0;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f4f8 100%);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(26, 71, 42, 0.15);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -1px;
+        }
+
+        .logo-icon {
+            font-size: 40px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .install-btn {
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: none;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .install-btn.visible {
+            display: flex;
+        }
+
+        .install-btn:hover {
+            background: #f5d547;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 213, 71, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            text-align: center;
+            animation: slideInDown 0.8s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 8vw, 56px);
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(26, 71, 42, 0.25);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .btn-mobile {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--accent);
+        }
+
+        .btn-mobile:hover {
+            background: var(--accent);
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(245, 213, 71, 0.25);
+        }
+
+        /* Stats Section */
+        .stats {
+            background: white;
+            padding: 40px 20px;
+            margin: 40px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            text-align: center;
+            animation: scaleIn 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes scaleIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .stat-item:nth-child(1) { animation-delay: 0.1s; }
+        .stat-item:nth-child(2) { animation-delay: 0.2s; }
+        .stat-item:nth-child(3) { animation-delay: 0.3s; }
+        .stat-item:nth-child(4) { animation-delay: 0.4s; }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Stories Grid */
+        .stories-section {
+            max-width: 1400px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 40px;
+            color: var(--primary);
+        }
+
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .story-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: slideUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .story-card:nth-child(1) { animation-delay: 0.05s; }
+        .story-card:nth-child(2) { animation-delay: 0.1s; }
+        .story-card:nth-child(3) { animation-delay: 0.15s; }
+        .story-card:nth-child(4) { animation-delay: 0.2s; }
+        .story-card:nth-child(5) { animation-delay: 0.25s; }
+        .story-card:nth-child(6) { animation-delay: 0.3s; }
+
+        .story-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(26, 71, 42, 0.15);
+        }
+
+        .story-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .story-title {
+            font-size: 18px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+        }
+
+        .story-content {
+            padding: 20px;
+        }
+
+        .story-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .story-genre {
+            background: var(--accent);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .story-rating {
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        .story-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .story-languages {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .lang-badge {
+            background: var(--light-bg);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .read-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .read-btn:hover {
+            background: var(--secondary);
+        }
+
+        /* Mobile Download Section */
+        .mobile-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 60px 20px;
+            margin: 80px 20px;
+            border-radius: 16px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            animation: slideUp 0.8s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-section h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            font-weight: 900;
+        }
+
+        .mobile-section p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.95;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .download-btn {
+            background: white;
+            color: var(--primary);
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .pwa-install-btn {
+            background: var(--accent);
+            color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        footer p {
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        footer a:hover {
+            opacity: 0.7;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                gap: 10px;
+            }
+
+            .hero {
+                padding: 40px 20px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .stories-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 16px;
+            }
+
+            .mobile-section h2 {
+                font-size: 28px;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+            }
+
+            .download-btn {
+                width: 100%;
+            }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 2000;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-icon">📖</span>
+                <span>StoryBridge</span>
+            </div>
+            <div class="header-actions">
+                <button class="install-btn" id="installBtn">
+                    <span>📱</span>
+                    <span>Install App</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Discover Stories in Two Languages</h1>
+            <p>Read thousands of English and Bangla stories side-by-side. Expand your imagination, improve your language skills, and explore diverse cultures.</p>
+            <div class="cta-buttons">
+                <button class="btn btn-primary" onclick="document.querySelector('.stories-section').scrollIntoView({behavior:'smooth'})">
+                    📚 Browse Stories
+                </button>
+                <button class="btn btn-secondary" onclick="document.querySelector('.mobile-section').scrollIntoView({behavior:'smooth'})">
+                    📱 Get Mobile App
+                </button>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">10,000+</div>
+                    <div class="stat-label">Stories</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Languages</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500K+</div>
+                    <div class="stat-label">Active Readers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Satisfaction</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stories-section">
+            <h2 class="section-title">Featured Stories</h2>
+            <div class="stories-grid" id="storiesGrid">
+                <!-- Stories will be generated here -->
+            </div>
+        </section>
+
+        <section class="mobile-section">
+            <h2>📱 Get the Mobile App</h2>
+            <p>Read your favorite stories anywhere, anytime. Works offline, syncs across devices, and gets instant access to new stories.</p>
+            <div class="download-buttons">
+                <button class="download-btn pwa-install-btn" id="pwaInstallBtn">
+                    <span>⚙️</span>
+                    <span>Install as App</span>
+                </button>
+                <button class="download-btn" onclick="openApp('ios')">
+                    <span>🍎</span>
+                    <span>Download iOS</span>
+                </button>
+                <button class="download-btn" onclick="openApp('android')">
+                    <span>🤖</span>
+                    <span>Download Android</span>
+                </button>
+            </div>
+            <p style="font-size: 14px; opacity: 0.8;">Available on all devices. Offline reading, no ads, pure stories.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 StoryBridge. Bridging languages, connecting hearts.</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#contact">Contact Us</a>
+                <a href="#feedback">Send Feedback</a>
+            </div>
+            <p style="font-size: 12px; margin-top: 20px; opacity: 0.6;">Made with ❤️ for readers worldwide</p>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('✅ Service Worker registered'))
+                .catch(err => console.log('❌ Service Worker registration failed:', err));
+        }
+
+        // Sample stories data
+        const stories = [
+            {
+                title: "The Lost Garden",
+                genre: "Fantasy",
+                rating: "⭐⭐⭐⭐⭐",
+                description: "A mysterious garden appears overnight in the city. What secrets does it hold?",
+                languages: ["English", "Bangla"]
+            },
+            {
+                title: "Moonlight Whispers",
+                genre: "Romance",
+                rating: "⭐⭐⭐⭐⭐",
+                description: "Two souls meet under the moonlight and discover a connection that transcends time.",
+                languages: ["English", "Bangla"]
+            },
+            {
+                title: "The Clockmaker's Secret",
+                genre: "Mystery",
+                rating: "⭐⭐⭐⭐",
+                description: "An old clockmaker guards a secret that could change history. Will it be revealed?",
+                languages: ["English", "Bangla"]
+            },
+            {
+                title: "Fireflies of Hope",
+                genre: "Inspirational",
+                rating: "⭐⭐⭐⭐⭐",
+                description: "In darkness, a young girl discovers the light within herself through glowing fireflies.",
+                languages: ["English", "Bangla"]
+            },
+            {
+                title: "The Echo Chamber",
+                genre: "Sci-Fi",
+                rating: "⭐⭐⭐⭐",
+                description: "Discover a dimension where every choice creates an alternate reality. Which path will you choose?",
+                languages: ["English", "Bangla"]
+            },
+            {
+                title: "Between the Pages",
+                genre: "Adventure",
+                rating: "⭐⭐⭐⭐⭐",
+                description: "A book becomes a portal to worlds beyond imagination. One boy will change them all.",
+                languages: ["English", "Bangla"]
+            }
+        ];
+
+        // Render stories
+        function renderStories() {
+            const grid = document.getElementById('storiesGrid');
+            grid.innerHTML = stories.map(story => `
+                <div class="story-card">
+                    <div class="story-header">
+                        <div class="story-title">${story.title}</div>
+                    </div>
+                    <div class="story-content">
+                        <div class="story-meta">
+                            <span class="story-genre">${story.genre}</span>
+                            <span class="story-rating">${story.rating}</span>
+                        </div>
+                        <p class="story-description">${story.description}</p>
+                        <div class="story-languages">
+                            ${story.languages.map(lang => `<span class="lang-badge">${lang}</span>`).join('')}
+                        </div>
+                        <button class="read-btn" onclick="readStory('${story.title}')">Read Story</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').classList.add('visible');
+            document.getElementById('pwaInstallBtn').style.display = 'flex';
+        });
+
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response: ${outcome}`);
+                deferredPrompt = null;
+                document.getElementById('installBtn').classList.remove('visible');
+            }
+        });
+
+        document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to PWA install: ${outcome}`);
+                deferredPrompt = null;
+            }
+        });
+
+        // Story interaction
+        function readStory(title) {
+            showToast(`📖 Opening "${title}"...`);
+            // In a real app, this would navigate to the story page
+            setTimeout(() => {
+                showToast(`✨ Enjoy reading "${title}"!`);
+            }, 1000);
+        }
+
+        // App store links
+        function openApp(platform) {
+            const links = {
+                ios: 'https://apps.apple.com/app/storybridge',
+                android: 'https://play.google.com/store/apps/details?id=com.storybridge'
+            };
+            showToast(`🔗 Opening ${platform.toUpperCase()} store...`);
+            // window.open(links[platform], '_blank');
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Initialize
+        renderStories();
+
+        // Check if already installed
+        window.addEventListener('appinstalled', () => {
+            showToast('✅ App installed successfully!');
+            deferredPrompt = null;
+        });
+
+        // Show offline status
+        window.addEventListener('online', () => {
+            showToast('🟢 You\'re online!');
+        });
+
+        window.addEventListener('offline', () => {
+            showToast('🔴 You\'re offline. Cached stories available.');
+        });
+    </script>
+</body>
+</html>
